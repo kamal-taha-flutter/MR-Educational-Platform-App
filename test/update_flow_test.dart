@@ -33,7 +33,7 @@ class FakePackageInfoPlatform extends PackageInfoPlatform {
     final buildNumber = buildNumberProvider();
     return PackageInfoData(
       appName: 'MR',
-      packageName: 'com.ertiqaa.mr',
+      packageName: 'com.example.mrportfolio',
       version: '4.0.$buildNumber',
       buildNumber: '$buildNumber',
       buildSignature: '',
@@ -49,8 +49,8 @@ class FakeUpdateRepository implements UpdateRepository {
   @override
   Future<Either<Failure, ReleaseModel>> getLatestRelease() async =>
       release != null
-          ? Right(release!)
-          : Left(const Failure('no release configured in fake'));
+      ? Right(release!)
+      : Left(const Failure('no release configured in fake'));
 
   @override
   Future<Either<Failure, void>> downloadReleaseApk(
@@ -103,7 +103,9 @@ void main() {
 
   setUp(() async {
     installedBuildNumber = 1;
-    PackageInfoPlatform.instance = FakePackageInfoPlatform(() => installedBuildNumber);
+    PackageInfoPlatform.instance = FakePackageInfoPlatform(
+      () => installedBuildNumber,
+    );
     tempDir = await Directory.systemTemp.createTemp('mr_update_test_');
     supportDir = Directory('${tempDir.path}${Platform.pathSeparator}support');
     updatesDir = Directory(
@@ -138,9 +140,7 @@ void main() {
   }
 
   void writeApk(String name, {int length = 1}) {
-    final file = File(
-      '${updatesDir.path}${Platform.pathSeparator}$name',
-    );
+    final file = File('${updatesDir.path}${Platform.pathSeparator}$name');
     file.parent.createSync(recursive: true);
     file.writeAsBytesSync(List<int>.filled(length, 0));
   }
@@ -149,32 +149,34 @@ void main() {
       '${updatesDir.path}${Platform.pathSeparator}$name';
 
   group('release-aware update flow (cubit)', () {
-    test('first update: no cache -> downloads release fileUrl and installs',
-        () async {
-      const fileUrl = 'https://mr-edu.ertiqaa.site/storage/releases/app-v4.0.7.apk';
+    test(
+      'first update: no cache -> downloads release fileUrl and installs',
+      () async {
+        const fileUrl =
+            'https://demo.example.invalid/storage/releases/app-v4.0.7.apk';
 
-      final state = await requireUpdateAndStart(fileUrl: fileUrl);
+        final state = await requireUpdateAndStart(fileUrl: fileUrl);
 
-      expect(repository.downloadedUrls, [fileUrl]);
-      expect(installer.installedPaths, [updatesPathFor('app-update-7.apk')]);
-      expect(state, isA<UpdateInstallStarted>());
-      expect(File(updatesPathFor('app-update-7.apk')).existsSync(), isTrue);
-    });
+        expect(repository.downloadedUrls, [fileUrl]);
+        expect(installer.installedPaths, [updatesPathFor('app-update-7.apk')]);
+        expect(state, isA<UpdateInstallStarted>());
+        expect(File(updatesPathFor('app-update-7.apk')).existsSync(), isTrue);
+      },
+    );
 
-    test('second update: cached wrong-version apk is deleted, download new',
-        () async {
-      writeApk('app-update-6.apk');
+    test(
+      'second update: cached wrong-version apk is deleted, download new',
+      () async {
+        writeApk('app-update-6.apk');
 
-      final state = await requireUpdateAndStart();
+        final state = await requireUpdateAndStart();
 
-      expect(installer.installedPaths, [updatesPathFor('app-update-7.apk')]);
-      expect(
-        File(updatesPathFor('app-update-6.apk')).existsSync(),
-        isFalse,
-      );
-      expect(File(updatesPathFor('app-update-7.apk')).existsSync(), isTrue);
-      expect(state, isA<UpdateInstallStarted>());
-    });
+        expect(installer.installedPaths, [updatesPathFor('app-update-7.apk')]);
+        expect(File(updatesPathFor('app-update-6.apk')).existsSync(), isFalse);
+        expect(File(updatesPathFor('app-update-7.apk')).existsSync(), isTrue);
+        expect(state, isA<UpdateInstallStarted>());
+      },
+    );
 
     test('legacy generic app-update.apk is deleted, never installed', () async {
       writeApk('app-update.apk');
@@ -182,38 +184,39 @@ void main() {
       final state = await requireUpdateAndStart();
 
       expect(installer.installedPaths, [updatesPathFor('app-update-7.apk')]);
-      expect(
-        File(updatesPathFor('app-update.apk')).existsSync(),
-        isFalse,
-      );
+      expect(File(updatesPathFor('app-update.apk')).existsSync(), isFalse);
       expect(state, isA<UpdateInstallStarted>());
     });
 
-    test('correct cached versioned apk is reused without downloading',
-        () async {
-      writeApk('app-update-7.apk');
+    test(
+      'correct cached versioned apk is reused without downloading',
+      () async {
+        writeApk('app-update-7.apk');
 
-      final state = await requireUpdateAndStart();
+        final state = await requireUpdateAndStart();
 
-      expect(repository.downloadedUrls, isEmpty);
-      expect(installer.installedPaths, [updatesPathFor('app-update-7.apk')]);
-      expect(state, isA<UpdateInstallStarted>());
-    });
+        expect(repository.downloadedUrls, isEmpty);
+        expect(installer.installedPaths, [updatesPathFor('app-update-7.apk')]);
+        expect(state, isA<UpdateInstallStarted>());
+      },
+    );
 
-    test('empty cached apk is not considered valid -> downloads and installs',
-        () async {
-      writeApk('app-update-7.apk', length: 0);
+    test(
+      'empty cached apk is not considered valid -> downloads and installs',
+      () async {
+        writeApk('app-update-7.apk', length: 0);
 
-      final state = await requireUpdateAndStart();
+        final state = await requireUpdateAndStart();
 
-      expect(repository.downloadedUrls, isNotEmpty);
-      expect(installer.installedPaths, [updatesPathFor('app-update-7.apk')]);
-      expect(
-        File(updatesPathFor('app-update-7.apk')).lengthSync(),
-        greaterThan(0),
-      );
-      expect(state, isA<UpdateInstallStarted>());
-    });
+        expect(repository.downloadedUrls, isNotEmpty);
+        expect(installer.installedPaths, [updatesPathFor('app-update-7.apk')]);
+        expect(
+          File(updatesPathFor('app-update-7.apk')).lengthSync(),
+          greaterThan(0),
+        );
+        expect(state, isA<UpdateInstallStarted>());
+      },
+    );
 
     test('download failure: no fallback to any old apk, error state', () async {
       writeApk('app-update-3.apk');
@@ -223,14 +226,8 @@ void main() {
 
       expect(installer.installedPaths, isEmpty);
       expect(state, isA<UpdateDownloadFailed>());
-      expect(
-        (state as UpdateDownloadFailed).message,
-        'انقطاع الشبكة',
-      );
-      expect(
-        File(updatesPathFor('app-update-7.apk')).existsSync(),
-        isFalse,
-      );
+      expect((state as UpdateDownloadFailed).message, 'انقطاع الشبكة');
+      expect(File(updatesPathFor('app-update-7.apk')).existsSync(), isFalse);
       expect(File(updatesPathFor('app-update-3.apk')).existsSync(), isFalse);
     });
 
@@ -250,15 +247,14 @@ void main() {
       expect(installer.installedPaths, isEmpty);
     });
 
-    test('fallbacks to /latest/download when release has no file_url',
-        () async {
-      final state = await requireUpdateAndStart();
+    test(
+      'fallbacks to /latest/download when release has no file_url',
+      () async {
+        final state = await requireUpdateAndStart();
 
-      expect(
-        repository.downloadedUrls,
-        ['/app/releases/latest/download'],
-      );
-      expect(state, isA<UpdateInstallStarted>());
-    });
+        expect(repository.downloadedUrls, ['/app/releases/latest/download']);
+        expect(state, isA<UpdateInstallStarted>());
+      },
+    );
   });
 }

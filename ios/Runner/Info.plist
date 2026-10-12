@@ -5,13 +5,13 @@
 		<key>CADisableMinimumFrameDurationOnPhone</key>
 		<true/>
 		<key>NSCameraUsageDescription</key>
-		<string>يتم استخدام الكاميرا لمسح QR رمز الطالب من الهاتف أو البطاقة.</string>
+		<string>ظٹطھظ… ط§ط³طھط®ط¯ط§ظ… ط§ظ„ظƒط§ظ…ظٹط±ط§ ظ„ظ…ط³ط­ QR ط±ظ…ط² ط§ظ„ط·ط§ظ„ط¨ ظ…ظ† ط§ظ„ظ‡ط§طھظپ ط£ظˆ ط§ظ„ط¨ط·ط§ظ‚ط©.</string>
 		<key>NSPhotoLibraryUsageDescription</key>
-		<string>يتم استخدام مكتبة الصور لاختيار صورة تحتوي على رمز QR لمسحها.</string>
+		<string>ظٹطھظ… ط§ط³طھط®ط¯ط§ظ… ظ…ظƒطھط¨ط© ط§ظ„طµظˆط± ظ„ط§ط®طھظٹط§ط± طµظˆط±ط© طھط­طھظˆظٹ ط¹ظ„ظ‰ ط±ظ…ط² QR ظ„ظ…ط³ط­ظ‡ط§.</string>
 		<key>CFBundleDevelopmentRegion</key>
 		<string>$(DEVELOPMENT_LANGUAGE)</string>
 		<key>CFBundleDisplayName</key>
-		<string>MR</string>
+		<string>MR Demo</string>
 		<key>CFBundleExecutable</key>
 		<string>$(EXECUTABLE_NAME)</string>
 		<key>CFBundleIdentifier</key>
@@ -19,7 +19,7 @@
 		<key>CFBundleInfoDictionaryVersion</key>
 		<string>6.0</string>
 		<key>CFBundleName</key>
-		<string>MR</string>
+		<string>MR Demo</string>
 		<key>CFBundlePackageType</key>
 		<string>APPL</string>
 		<key>CFBundleShortVersionString</key>

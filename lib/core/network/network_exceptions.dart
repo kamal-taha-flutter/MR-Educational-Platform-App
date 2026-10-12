@@ -61,7 +61,9 @@ class NetworkExceptions {
       case 400:
         return Failure(serverMessage ?? 'بيانات غير صحيحة');
       case 401:
-        return Failure(serverMessage ?? 'اسم المستخدم أو كلمة المرور غير صحيحة');
+        return Failure(
+          serverMessage ?? 'اسم المستخدم أو كلمة المرور غير صحيحة',
+        );
       case 403:
         return Failure(serverMessage ?? 'غير مسموح لك بالدخول');
       case 404:

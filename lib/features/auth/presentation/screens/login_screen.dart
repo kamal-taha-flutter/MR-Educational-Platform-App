@@ -114,6 +114,7 @@ class _LoginViewState extends State<_LoginView> {
                           ),
                           child: Column(
                             children: [
+                              const _DemoAccountsHint(),
                               CustomTextField(
                                 controller: _usernameController,
                                 hintText: 'اسم المستخدم',
@@ -144,7 +145,7 @@ class _LoginViewState extends State<_LoginView> {
                         const Spacer(),
 
                         CustomButton(
-                          text: 'تسجيل الدخول',
+                          text: 'تسجيل الدخول (عرض تجريبي)',
                           isLoading: isLoading,
                           onPressed: () {
                             context.read<AuthCubit>().login(
@@ -162,6 +163,50 @@ class _LoginViewState extends State<_LoginView> {
             );
           },
         ),
+      ),
+    );
+  }
+}
+
+/// DEMO MODE: clearly documents the only two accepted demo accounts.
+/// Local demo login is NOT real authentication and provides NO security.
+class _DemoAccountsHint extends StatelessWidget {
+  const _DemoAccountsHint();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFFF7ED),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: const Color(0xFFE8552A).withValues(alpha: 0.3),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'DEMO MODE — تسجيل دخول تجريبي بالكامل',
+            style: GoogleFonts.cairo(
+              fontSize: 12,
+              fontWeight: FontWeight.w700,
+              color: AppColors.primary,
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            'طالب: student / demo1234\nمساعد: assistant / demo1234',
+            style: GoogleFonts.cairo(
+              fontSize: 12,
+              color: Colors.black54,
+              height: 1.5,
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -38,7 +38,8 @@ class LessonDetailModel {
       videoUrl: json['video_url'] ?? '',
       thumbnailUrl: json['thumbnail_url'] ?? '',
       aboutLesson: json['about_lesson'] ?? '',
-      whatYouWillLearn: (json['what_you_will_learn'] as List<dynamic>?)
+      whatYouWillLearn:
+          (json['what_you_will_learn'] as List<dynamic>?)
               ?.map((e) => e.toString())
               .toList() ??
           [],

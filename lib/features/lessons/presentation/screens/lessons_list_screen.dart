@@ -80,7 +80,11 @@ class _LessonsListBodyState extends State<_LessonsListBody> {
               child: BlocBuilder<LessonsCubit, LessonsState>(
                 builder: (context, state) {
                   if (state is LessonsLoading || state is LessonsInitial) {
-                    return Center(child: CircularProgressIndicator(color: AppColors.primary));
+                    return Center(
+                      child: CircularProgressIndicator(
+                        color: AppColors.primary,
+                      ),
+                    );
                   }
 
                   if (state is LessonsError) {
@@ -99,8 +103,10 @@ class _LessonsListBodyState extends State<_LessonsListBody> {
                             ElevatedButton(
                               onPressed: () =>
                                   context.read<LessonsCubit>().getLessons(),
-                              child:
-                                  Text('حاول تاني', style: GoogleFonts.cairo()),
+                              child: Text(
+                                'حاول تاني',
+                                style: GoogleFonts.cairo(),
+                              ),
                             ),
                           ],
                         ),
@@ -126,8 +132,7 @@ class _LessonsListBodyState extends State<_LessonsListBody> {
                   }
 
                   return RefreshIndicator(
-                    onRefresh: () =>
-                        context.read<LessonsCubit>().getLessons(),
+                    onRefresh: () => context.read<LessonsCubit>().getLessons(),
                     child: _LessonsContent(lessons: filtered),
                   );
                 },
@@ -208,10 +213,7 @@ class _HeaderWidget extends StatelessWidget {
                     onChanged: onSearchChanged,
                     autofocus: true,
                     textInputAction: TextInputAction.search,
-                    style: GoogleFonts.cairo(
-                      fontSize: 14,
-                      color: Colors.white,
-                    ),
+                    style: GoogleFonts.cairo(fontSize: 14, color: Colors.white),
                     cursorColor: Colors.white,
                     decoration: InputDecoration(
                       hintText: 'ابحث عن درس...',
@@ -243,8 +245,10 @@ class _HeaderWidget extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12.r),
                         borderSide: BorderSide.none,
                       ),
-                      contentPadding:
-                          EdgeInsets.symmetric(horizontal: 14.w, vertical: 10.h),
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: 14.w,
+                        vertical: 10.h,
+                      ),
                     ),
                   ),
                 )
@@ -301,10 +305,7 @@ class _LessonsContent extends StatelessWidget {
                 return LessonCardWidget(
                   lesson: lesson,
                   onTap: () {
-                    context.push(
-                      Routes.lessonDetail,
-                      arguments: lesson.id,
-                    );
+                    context.push(Routes.lessonDetail, arguments: lesson.id);
                   },
                 );
               },

@@ -15,11 +15,7 @@ class InfoSectionCard extends StatelessWidget {
   final String title;
   final List<InfoRowData> rows;
 
-  const InfoSectionCard({
-    super.key,
-    required this.title,
-    required this.rows,
-  });
+  const InfoSectionCard({super.key, required this.title, required this.rows});
 
   @override
   Widget build(BuildContext context) {

@@ -21,4 +21,4 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
     );
     return apiResponse.data!;
   }
-} 
+}

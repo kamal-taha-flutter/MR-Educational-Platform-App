@@ -28,8 +28,9 @@ class _ScanQrResultViewState extends State<ScanQrResultView> {
     final imageUrl = value?.trim();
     if (imageUrl == null || imageUrl.isEmpty) return null;
 
-    final markdownMatch =
-        RegExp(r'^\[[^\]]*\]\((https?://[^)]+)\)$').firstMatch(imageUrl);
+    final markdownMatch = RegExp(
+      r'^\[[^\]]*\]\((https?://[^)]+)\)$',
+    ).firstMatch(imageUrl);
     return markdownMatch?.group(1) ?? imageUrl;
   }
 
@@ -37,8 +38,9 @@ class _ScanQrResultViewState extends State<ScanQrResultView> {
     if (_isRegistering) return;
 
     setState(() => _isRegistering = true);
-    final failure =
-        await context.read<ScanQrCubit>().registerAttendance(studentId);
+    final failure = await context.read<ScanQrCubit>().registerAttendance(
+      studentId,
+    );
 
     if (!mounted) return;
     setState(() => _isRegistering = false);
@@ -53,7 +55,8 @@ class _ScanQrResultViewState extends State<ScanQrResultView> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
-          'تم تسجيل الحضور بنجاح',
+          // DEMO MODE: attendance is only recorded in a local in-memory log.
+          'تم تسجيل الحضور محليًا (عرض تجريبي — لم يُرسل أي بيانات)',
           style: GoogleFonts.cairo(
             fontSize: 14,
             fontWeight: FontWeight.w600,
@@ -68,10 +71,7 @@ class _ScanQrResultViewState extends State<ScanQrResultView> {
       ),
     );
 
-    context.pushUntil(
-      Routes.scanQrEntry,
-      (route) => false,
-    );
+    context.pushUntil(Routes.scanQrEntry, (route) => false);
   }
 
   @override
@@ -84,7 +84,9 @@ class _ScanQrResultViewState extends State<ScanQrResultView> {
           builder: (context, state) {
             if (state is! ScanQrSuccess) {
               // مفروض ميوصلش هنا غير لما يبقى فيه بيانات، بس احتياطًا
-              return Center(child: CircularProgressIndicator(color: AppColors.primary));
+              return Center(
+                child: CircularProgressIndicator(color: AppColors.primary),
+              );
             }
 
             final student = state.student;
@@ -105,7 +107,6 @@ class _ScanQrResultViewState extends State<ScanQrResultView> {
                           colors: [AppColors.primary, AppColors.primaryDark],
                         ),
                       ),
-                     
                     ),
 
                     // ---- الجسم ----
@@ -168,9 +169,13 @@ class _ScanQrResultViewState extends State<ScanQrResultView> {
                                     value: student.dob,
                                   ),
                                 InfoRowData(
-                                    label: 'الاسم الكامل', value: student.name),
+                                  label: 'الاسم الكامل',
+                                  value: student.name,
+                                ),
                                 InfoRowData(
-                                    label: 'رقم هاتف للتواصل', value: student.phone),
+                                  label: 'رقم هاتف للتواصل',
+                                  value: student.phone,
+                                ),
                               ],
                             ),
 
@@ -180,11 +185,13 @@ class _ScanQrResultViewState extends State<ScanQrResultView> {
                               title: 'ولي الأمر',
                               rows: [
                                 InfoRowData(
-                                    label: 'اسم ولي الأمر',
-                                    value: student.guardianName),
+                                  label: 'اسم ولي الأمر',
+                                  value: student.guardianName,
+                                ),
                                 InfoRowData(
-                                    label: 'رقم هاتف التواصل',
-                                    value: student.guardianPhone),
+                                  label: 'رقم هاتف التواصل',
+                                  value: student.guardianPhone,
+                                ),
                               ],
                             ),
 
@@ -195,9 +202,7 @@ class _ScanQrResultViewState extends State<ScanQrResultView> {
                               height: 52.h,
                               child: ElevatedButton(
                                 onPressed: () {
-                                   _registerAttendance(student.id);
-                                  // TODO: نادِ هنا endpoint تسجيل الحضور لما يبقى جاهز
-                                  // مثال: context.read<AttendanceCubit>().checkIn(student.id);
+                                  _registerAttendance(student.id);
                                 },
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: AppColors.primary,

@@ -76,16 +76,13 @@ class _ReportsHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      decoration: const BoxDecoration(
-        color: AppColors.primary
-      ),
+      decoration: const BoxDecoration(color: AppColors.primary),
       child: SafeArea(
         bottom: false,
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
           child: Row(
             children: [
-             
               const Spacer(),
               Text(
                 'التقارير',
@@ -96,7 +93,7 @@ class _ReportsHeader extends StatelessWidget {
                 ),
               ),
               const Spacer(),
-              SizedBox( height: 70.w),
+              SizedBox(height: 70.w),
             ],
           ),
         ),

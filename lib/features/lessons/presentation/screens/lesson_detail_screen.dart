@@ -79,7 +79,9 @@ class _LessonDetailBodyState extends State<_LessonDetailBody>
         body: BlocBuilder<LessonDetailCubit, LessonDetailState>(
           builder: (context, state) {
             if (state is LessonDetailLoading || state is LessonDetailInitial) {
-              return Center(child: CircularProgressIndicator(color: AppColors.primary));
+              return Center(
+                child: CircularProgressIndicator(color: AppColors.primary),
+              );
             }
 
             if (state is LessonDetailError) {
@@ -138,7 +140,7 @@ class _CustomAppBar extends StatelessWidget {
             children: [
               GestureDetector(
                 onTap: () => context.pushReplacement(Routes.root1),
-                  child: Row(
+                child: Row(
                   children: [
                     Icon(
                       Icons.arrow_forward_ios_rounded,
@@ -185,33 +187,40 @@ class VideoPlayerWidget extends StatefulWidget {
 }
 
 class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
-  static const String _fallbackVideoId = 'AEHJqatke6E';
-  late final YoutubePlayerController _controller;
+  YoutubePlayerController? _controller;
   bool _showThumbnail = true;
   bool _isFullScreen = false;
 
   @override
   void initState() {
     super.initState();
-    final videoId =
-        _extractYoutubeVideoId(widget.lesson.videoUrl) ?? _fallbackVideoId;
-    _controller = YoutubePlayerController.fromVideoId(
-      videoId: videoId,
-      autoPlay: false,
-      params: const YoutubePlayerParams(
-        showControls: false,
-        showFullscreenButton: false,
-        strictRelatedVideos: true,
-        loop: true,
-      ),
-    );
-    _controller.setFullScreenListener(_onFullScreenChanged);
+    // DEMO MODE: the demo data points at a public Creative Commons sample
+    // video (Big Buck Bunny). If no valid video URL is available we simply
+    // show a local placeholder — there is intentionally NO hardcoded video
+    // fallback that could leak private content.
+    final videoId = _extractYoutubeVideoId(widget.lesson.videoUrl);
+    if (videoId != null && videoId.isNotEmpty) {
+      _controller = YoutubePlayerController.fromVideoId(
+        videoId: videoId,
+        autoPlay: false,
+        params: const YoutubePlayerParams(
+          showControls: false,
+          showFullscreenButton: false,
+          strictRelatedVideos: true,
+          loop: true,
+        ),
+      );
+      _controller!.setFullScreenListener(_onFullScreenChanged);
+    }
   }
 
   @override
   void dispose() {
-    _controller.setFullScreenListener((_) {});
-    _controller.close();
+    final controller = _controller;
+    if (controller != null) {
+      controller.setFullScreenListener((_) {});
+      controller.close();
+    }
     super.dispose();
   }
 
@@ -232,20 +241,25 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
 
   void _startPlayback() {
     setState(() => _showThumbnail = false);
-    _controller.playVideo();
+    _controller?.playVideo();
   }
 
   @override
   Widget build(BuildContext context) {
+    final controller = _controller;
+    if (controller == null) {
+      return const _VideoUnavailablePlaceholder();
+    }
+
     return PopScope(
       canPop: !_isFullScreen,
       onPopInvokedWithResult: (didPop, _) {
         if (!didPop && _isFullScreen) {
-          _controller.exitFullScreen(lock: false);
+          controller.exitFullScreen(lock: false);
         }
       },
       child: YoutubePlayer(
-        controller: _controller,
+        controller: controller,
         builder: (context, player, controller) {
           return Stack(
             fit: StackFit.expand,
@@ -291,6 +305,41 @@ class _ThumbnailPlaceholder extends StatelessWidget {
   }
 }
 
+/// DEMO MODE: shown when a lesson has no playable (demo) video URL.
+class _VideoUnavailablePlaceholder extends StatelessWidget {
+  const _VideoUnavailablePlaceholder();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 210.h,
+      width: double.infinity,
+      color: Colors.black87,
+      alignment: Alignment.center,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            Icons.videocam_off_rounded,
+            color: AppColors.primary,
+            size: 48.w,
+          ),
+          SizedBox(height: 10.h),
+          Text(
+            'لا يوجد فيديو تجريبي لهذا الدرس',
+            textAlign: TextAlign.center,
+            style: GoogleFonts.cairo(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: Colors.white,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 String? _extractYoutubeVideoId(String url) {
   if (url.isEmpty) return null;
   final uri = Uri.tryParse(url);
@@ -304,11 +353,9 @@ String? _extractYoutubeVideoId(String url) {
   final queryId = uri.queryParameters['v'];
   if (queryId != null && queryId.isNotEmpty) return queryId;
 
-  final parts = uri.path
-      .split('/')
-      .where((part) => part.isNotEmpty)
-      .toList();
-  if (parts.length >= 2 && (parts.first == 'embed' || parts.first == 'shorts')) {
+  final parts = uri.path.split('/').where((part) => part.isNotEmpty).toList();
+  if (parts.length >= 2 &&
+      (parts.first == 'embed' || parts.first == 'shorts')) {
     return parts[1];
   }
 
@@ -592,7 +639,9 @@ class _NotesTabBody extends StatelessWidget {
     return BlocBuilder<LessonNotesCubit, LessonNotesState>(
       builder: (context, state) {
         if (state is LessonNotesLoading || state is LessonNotesInitial) {
-          return Center(child: CircularProgressIndicator(color: AppColors.primary));
+          return Center(
+            child: CircularProgressIndicator(color: AppColors.primary),
+          );
         }
 
         if (state is LessonNotesError) {
@@ -647,10 +696,8 @@ class _NotesTabBody extends StatelessWidget {
                 width: double.infinity,
                 height: 44.h,
                 child: ElevatedButton.icon(
-                  onPressed: () => _showNoteDialog(
-                    context,
-                    lessonId: lesson.id,
-                  ),
+                  onPressed: () =>
+                      _showNoteDialog(context, lessonId: lesson.id),
                   icon: const Icon(Icons.add_rounded, size: 20),
                   label: Text('إضافة ملاحظة', style: GoogleFonts.cairo()),
                   style: ElevatedButton.styleFrom(
@@ -689,10 +736,7 @@ class _NotesTabBody extends StatelessWidget {
               dialogContext.pop();
               cubit.deleteNote(note);
             },
-            child: Text(
-              'حذف',
-              style: GoogleFonts.cairo(color: Colors.red),
-            ),
+            child: Text('حذف', style: GoogleFonts.cairo(color: Colors.red)),
           ),
         ],
       ),

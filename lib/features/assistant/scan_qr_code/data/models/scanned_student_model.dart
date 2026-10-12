@@ -29,9 +29,11 @@ class ScannedStudentModel {
       name: (json['full_name'] ?? json['name'] ?? '').toString(),
       // TODO: تأكد المفتاح ده student_number ولا student_code ولا حاجة تانية
       studentNumber:
-          json['student_number']?.toString() ?? json['student_code']?.toString(),
+          json['student_number']?.toString() ??
+          json['student_code']?.toString(),
       grade: (json['grade'] ?? '').toString(),
-      phone: json['phone']?.toString() ??
+      phone:
+          json['phone']?.toString() ??
           json['student_phone']?.toString() ??
           json['guardian_phone']?.toString() ??
           '',

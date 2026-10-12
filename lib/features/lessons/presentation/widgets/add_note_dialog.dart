@@ -22,9 +22,7 @@ class AddNoteDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(24.0),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24.0)),
       elevation: 0,
       backgroundColor: Colors.transparent,
       child: Container(
@@ -59,7 +57,10 @@ class AddNoteDialog extends StatelessWidget {
                 ),
                 IconButton(
                   onPressed: () => Navigator.pop(context),
-                  icon: const Icon(Icons.close_rounded, color: Color(0xFF9E9E9E)),
+                  icon: const Icon(
+                    Icons.close_rounded,
+                    color: Color(0xFF9E9E9E),
+                  ),
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(),
                 ),

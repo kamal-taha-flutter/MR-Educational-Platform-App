@@ -36,10 +36,7 @@ class LessonNotesRepositoryImpl implements LessonNotesRepository {
     final db = await _database.database;
     await db.update(
       NotesDatabase.tableName,
-      {
-        'content': content,
-        'updated_at': DateTime.now().millisecondsSinceEpoch,
-      },
+      {'content': content, 'updated_at': DateTime.now().millisecondsSinceEpoch},
       where: 'id = ?',
       whereArgs: [note.id],
     );

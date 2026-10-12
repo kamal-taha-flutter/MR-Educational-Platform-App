@@ -34,8 +34,9 @@ class _ProfileBody extends StatelessWidget {
     final imageUrl = value?.trim();
     if (imageUrl == null || imageUrl.isEmpty) return null;
 
-    final markdownMatch =
-        RegExp(r'^\[[^\]]*\]\((https?://[^)]+)\)$').firstMatch(imageUrl);
+    final markdownMatch = RegExp(
+      r'^\[[^\]]*\]\((https?://[^)]+)\)$',
+    ).firstMatch(imageUrl);
     return markdownMatch?.group(1) ?? imageUrl;
   }
 
@@ -48,7 +49,9 @@ class _ProfileBody extends StatelessWidget {
         body: BlocBuilder<ProfileCubit, ProfileState>(
           builder: (context, state) {
             if (state is ProfileLoading || state is ProfileInitial) {
-              return Center(child: CircularProgressIndicator(color: AppColors.primary));
+              return Center(
+                child: CircularProgressIndicator(color: AppColors.primary),
+              );
             }
 
             if (state is ProfileError) {
@@ -59,14 +62,12 @@ class _ProfileBody extends StatelessWidget {
                     Text(
                       state.message,
                       textAlign: TextAlign.center,
-                      style: GoogleFonts.cairo(
-                        fontSize: 14,
-                        color: Colors.red,
-                      ),
+                      style: GoogleFonts.cairo(fontSize: 14, color: Colors.red),
                     ),
                     SizedBox(height: 12.h),
                     ElevatedButton(
-                      onPressed: () => context.read<ProfileCubit>().getProfile(),
+                      onPressed: () =>
+                          context.read<ProfileCubit>().getProfile(),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primary,
                       ),
@@ -160,13 +161,18 @@ class _ProfileBody extends StatelessWidget {
                                     value: student.dob,
                                   ),
                                 InfoRowData(
-                                    label: 'الاسم الكامل', value: student.name),
+                                  label: 'الاسم الكامل',
+                                  value: student.name,
+                                ),
                                 if (student.email.isNotEmpty)
                                   InfoRowData(
-                                      label: 'البريد الإلكتروني',
-                                      value: student.email),
+                                    label: 'البريد الإلكتروني',
+                                    value: student.email,
+                                  ),
                                 InfoRowData(
-                                    label: 'رقم هاتف للتواصل', value: student.phone),
+                                  label: 'رقم هاتف للتواصل',
+                                  value: student.phone,
+                                ),
                               ],
                             ),
 
@@ -176,11 +182,13 @@ class _ProfileBody extends StatelessWidget {
                               title: 'ولي الأمر',
                               rows: [
                                 InfoRowData(
-                                    label: 'اسم ولي الأمر',
-                                    value: student.guardianName),
+                                  label: 'اسم ولي الأمر',
+                                  value: student.guardianName,
+                                ),
                                 InfoRowData(
-                                    label: 'رقم هاتف التواصل',
-                                    value: student.guardianPhone),
+                                  label: 'رقم هاتف التواصل',
+                                  value: student.guardianPhone,
+                                ),
                               ],
                             ),
 
@@ -199,7 +207,7 @@ class _ProfileBody extends StatelessWidget {
                                   );
                                 },
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor:const Color(0xFF3E8E4F),
+                                  backgroundColor: const Color(0xFF3E8E4F),
                                   elevation: 0,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(14.r),

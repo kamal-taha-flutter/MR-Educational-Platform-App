@@ -48,7 +48,7 @@ class _QrCodeBody extends StatelessWidget {
                   child: SafeArea(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: [  
+                      children: [
                         Gap(10.h),
                         Expanded(
                           child: Text(
@@ -61,18 +61,21 @@ class _QrCodeBody extends StatelessWidget {
                             ),
                           ),
                         ),
-                       ],
+                      ],
                     ),
                   ),
                 ),
-                
 
                 //body
                 Expanded(
                   child: BlocBuilder<ProfileCubit, ProfileState>(
                     builder: (context, state) {
                       if (state is ProfileLoading || state is ProfileInitial) {
-                        return Center(child: CircularProgressIndicator(color: AppColors.primary));
+                        return Center(
+                          child: CircularProgressIndicator(
+                            color: AppColors.primary,
+                          ),
+                        );
                       }
 
                       if (state is ProfileError) {
@@ -91,7 +94,10 @@ class _QrCodeBody extends StatelessWidget {
                                 ElevatedButton(
                                   onPressed: () =>
                                       context.read<ProfileCubit>().getProfile(),
-                                  child: Text('حاول تاني', style: GoogleFonts.cairo()),
+                                  child: Text(
+                                    'حاول تاني',
+                                    style: GoogleFonts.cairo(),
+                                  ),
                                 ),
                               ],
                             ),
@@ -130,7 +136,9 @@ class _QrCodeBody extends StatelessWidget {
                             Container(
                               margin: EdgeInsets.symmetric(horizontal: 24.w),
                               padding: EdgeInsets.symmetric(
-                                  vertical: 24.h, horizontal: 16.w),
+                                vertical: 24.h,
+                                horizontal: 16.w,
+                              ),
                               decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(20.r),
@@ -146,7 +154,9 @@ class _QrCodeBody extends StatelessWidget {
                                 children: [
                                   Container(
                                     padding: EdgeInsets.symmetric(
-                                        horizontal: 14.w, vertical: 6.h),
+                                      horizontal: 14.w,
+                                      vertical: 6.h,
+                                    ),
                                     decoration: BoxDecoration(
                                       color: const Color(0xFFF1EEFC),
                                       borderRadius: BorderRadius.circular(20.r),
@@ -234,7 +244,7 @@ class _QrCodeBody extends StatelessWidget {
                   right: 0,
                   child: Center(
                     child: GestureDetector(
-                      onTap: (){
+                      onTap: () {
                         context.push(Routes.profileView);
                       },
                       child: StudentAvatar(

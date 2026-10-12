@@ -16,9 +16,7 @@ class ScanQrRemoteDataSourceImpl implements ScanQrRemoteDataSource {
 
   @override
   Future<ScannedStudentModel> scanStudent(String qrCodeString) async {
-    final response = await dio.get(
-      ApiConstants.scanStudentByQr(qrCodeString),
-    );
+    final response = await dio.get(ApiConstants.scanStudentByQr(qrCodeString));
     final apiResponse = ApiResponse<ScannedStudentModel>.fromJson(
       response.data,
       (json) => ScannedStudentModel.fromJson(json),
@@ -34,7 +32,9 @@ class ScanQrRemoteDataSourceImpl implements ScanQrRemoteDataSource {
 
     final student = apiResponse.data;
     if (student == null) {
-      throw const FormatException('Scan response does not contain student data.');
+      throw const FormatException(
+        'Scan response does not contain student data.',
+      );
     }
 
     return student;
@@ -53,9 +53,7 @@ class ScanQrRemoteDataSourceImpl implements ScanQrRemoteDataSource {
 
     final data = Map<String, dynamic>.from(response.data as Map);
     if (data['success'] != true) {
-      throw ApiException(
-        data['message']?.toString() ?? 'تعذر تسجيل الحضور.',
-      );
+      throw ApiException(data['message']?.toString() ?? 'تعذر تسجيل الحضور.');
     }
   }
 }

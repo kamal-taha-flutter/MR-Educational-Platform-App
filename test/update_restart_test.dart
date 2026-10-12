@@ -31,7 +31,7 @@ class RestartPackageInfoPlatform extends PackageInfoPlatform {
   Future<PackageInfoData> getAll({String? baseUrl}) async {
     return PackageInfoData(
       appName: 'MR',
-      packageName: 'com.ertiqaa.mr',
+      packageName: 'com.example.mrportfolio',
       version: '4.0.7',
       buildNumber: '7',
       buildSignature: '',
@@ -40,13 +40,15 @@ class RestartPackageInfoPlatform extends PackageInfoPlatform {
 }
 
 class FakeUpdateRepository implements UpdateRepository {
-  ReleaseModel release =
-      ReleaseModel.fromJson(<String, Object?>{'version_code': 7});
+  ReleaseModel release = ReleaseModel.fromJson(<String, Object?>{
+    'version_code': 7,
+  });
   bool failed = false;
   final List<String> downloadedUrls = [];
 
   @override
-  Future<Either<Failure, ReleaseModel>> getLatestRelease() async => Right(release);
+  Future<Either<Failure, ReleaseModel>> getLatestRelease() async =>
+      Right(release);
 
   @override
   Future<Either<Failure, void>> downloadReleaseApk(
@@ -110,33 +112,35 @@ void main() {
   });
 
   void writeApk(String name) {
-    final file = File(
-      '${updatesDir.path}${Platform.pathSeparator}$name',
-    );
+    final file = File('${updatesDir.path}${Platform.pathSeparator}$name');
     file.parent.createSync(recursive: true);
     file.writeAsBytesSync(List<int>.filled(1, 0));
   }
 
-  test('restart after install: installed(7) matches backend(7) -> no update, '
-      'nothing downloaded, nothing installed, stale generic apk untouched', () async {
-    // حتى لو جرّبنا نبدأ تحديث غصب (سيناريو الجسد القديم متخلف) —
-    // ممنوع يحصل أي تنزيل أو تثبيت لأن النسخة المثبتة = نسخة الخادم.
-    writeApk('app-update.apk');
+  test(
+    'restart after install: installed(7) matches backend(7) -> no update, '
+    'nothing downloaded, nothing installed, stale generic apk untouched',
+    () async {
+      // حتى لو جرّبنا نبدأ تحديث غصب (سيناريو الجسد القديم متخلف) —
+      // ممنوع يحصل أي تنزيل أو تثبيت لأن النسخة المثبتة = نسخة الخادم.
+      writeApk('app-update.apk');
 
-    await cubit.checkForUpdate();
-    await pumpEventQueue();
+      await cubit.checkForUpdate();
+      await pumpEventQueue();
 
-    expect(cubit.state, isA<UpdateNotRequired>());
+      expect(cubit.state, isA<UpdateNotRequired>());
 
-    await cubit.startUpdate();
-    await pumpEventQueue();
+      await cubit.startUpdate();
+      await pumpEventQueue();
 
       expect(repository.downloadedUrls, isEmpty);
-    expect(installer.installedPaths, isEmpty);
-    expect(
-      File('${updatesDir.path}${Platform.pathSeparator}app-update.apk')
-          .existsSync(),
-      isTrue,
-    );
-  });
+      expect(installer.installedPaths, isEmpty);
+      expect(
+        File(
+          '${updatesDir.path}${Platform.pathSeparator}app-update.apk',
+        ).existsSync(),
+        isTrue,
+      );
+    },
+  );
 }

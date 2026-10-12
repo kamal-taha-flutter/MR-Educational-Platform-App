@@ -172,10 +172,7 @@ class _LessonVideoControlsState extends State<LessonVideoControls> {
                 onTap: () => _seekBy(const Duration(seconds: -10)),
               ),
               SizedBox(width: 20.w),
-              _PlayPauseButton(
-                state: _playerState,
-                onTap: _togglePlay,
-              ),
+              _PlayPauseButton(state: _playerState, onTap: _togglePlay),
               SizedBox(width: 20.w),
               _SkipButton(
                 label: '+10s',
@@ -205,15 +202,9 @@ class _LessonVideoControlsState extends State<LessonVideoControls> {
               SizedBox(height: 4.h),
               Row(
                 children: [
-                  Text(
-                    _formatDuration(_position),
-                    style: _timestampStyle(),
-                  ),
+                  Text(_formatDuration(_position), style: _timestampStyle()),
                   const Spacer(),
-                  Text(
-                    _formatDuration(_duration),
-                    style: _timestampStyle(),
-                  ),
+                  Text(_formatDuration(_duration), style: _timestampStyle()),
                 ],
               ),
             ],
@@ -365,8 +356,8 @@ class _PlayPauseButton extends StatelessWidget {
                 isPlaying
                     ? Icons.pause_rounded
                     : isEnded
-                        ? Icons.replay_rounded
-                        : Icons.play_arrow_rounded,
+                    ? Icons.replay_rounded
+                    : Icons.play_arrow_rounded,
                 color: Colors.white,
                 size: 34.w,
               ),
@@ -448,19 +439,28 @@ class _SeekBarState extends State<_SeekBar> {
           behavior: HitTestBehavior.opaque,
           onTapDown: (details) {
             setState(
-              () => _dragFraction = _updateFromDx(details.localPosition.dx, width),
+              () => _dragFraction = _updateFromDx(
+                details.localPosition.dx,
+                width,
+              ),
             );
           },
           onTapUp: (_) => _commit(),
           onTapCancel: () => setState(() => _dragFraction = null),
           onHorizontalDragStart: (details) {
             setState(
-              () => _dragFraction = _updateFromDx(details.localPosition.dx, width),
+              () => _dragFraction = _updateFromDx(
+                details.localPosition.dx,
+                width,
+              ),
             );
           },
           onHorizontalDragUpdate: (details) {
             setState(
-              () => _dragFraction = _updateFromDx(details.localPosition.dx, width),
+              () => _dragFraction = _updateFromDx(
+                details.localPosition.dx,
+                width,
+              ),
             );
           },
           onHorizontalDragEnd: (_) => _commit(),
@@ -509,7 +509,10 @@ class _SeekBarState extends State<_SeekBar> {
                             shape: BoxShape.circle,
                             color: Colors.white,
                             boxShadow: [
-                              BoxShadow(color: Color(0x59000000), blurRadius: 4),
+                              BoxShadow(
+                                color: Color(0x59000000),
+                                blurRadius: 4,
+                              ),
                             ],
                           ),
                         ),

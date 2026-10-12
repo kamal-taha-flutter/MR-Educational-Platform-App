@@ -56,7 +56,7 @@ void main() {
   });
 
   group('ReleaseModel.fromJson', () {
-    test('parses the real backend payload', () {
+    test('parses a demo release payload', () {
       const payload = {
         'id': 2,
         'version_code': 2,
@@ -65,7 +65,7 @@ void main() {
         'file_name': 'app-v4.0.2.apk',
         'file_size': 93102427,
         'file_url':
-            'https://mr-edu.ertiqaa.site/storage/releases/app-v4.0.2.apk',
+            'https://demo.example.invalid/storage/releases/app-v4.0.2.apk',
         'published_at': '2026-09-12T08:08:38+00:00',
       };
 
@@ -79,7 +79,7 @@ void main() {
       expect(release.fileSize, 93102427);
       expect(
         release.fileUrl,
-        'https://mr-edu.ertiqaa.site/storage/releases/app-v4.0.2.apk',
+        'https://demo.example.invalid/storage/releases/app-v4.0.2.apk',
       );
     });
 

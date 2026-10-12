@@ -2,13 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mr/core/demo/demo_data.dart';
 import 'package:mr/core/di/service_locator.dart';
 import 'package:mr/core/extensions/context_extensions.dart';
 import 'package:mr/core/routing/routes.dart';
 import 'package:mr/core/storage/token_storage.dart';
 import 'package:mr/core/theme/app_colors.dart';
 import '../cubit/scan_qr_cubit.dart';
+import '../cubit/scan_qr_state.dart';
 import 'scan_qr_camera_view.dart';
+import 'scan_qr_result_view.dart';
 
 class ScanQrEntryView extends StatelessWidget {
   const ScanQrEntryView({super.key});
@@ -31,122 +34,179 @@ class _ScanQrEntryBody extends StatelessWidget {
   Widget build(BuildContext context) {
     return Directionality(
       textDirection: TextDirection.rtl,
-      child: Scaffold(
-        body: Container(
-          width: double.infinity,
-          height: double.infinity,
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [AppColors.primary, AppColors.primaryDark],
+      child: BlocListener<ScanQrCubit, ScanQrState>(
+        // DEMO MODE: the "simulate scan" button resolves a fictional student
+        // locally and navigates here without touching the camera.
+        listener: (context, state) {
+          if (state is ScanQrSuccess) {
+            final scanQrCubit = context.read<ScanQrCubit>();
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) => BlocProvider.value(
+                  value: scanQrCubit,
+                  child: const ScanQrResultView(),
+                ),
+              ),
+            );
+          }
+          if (state is ScanQrError) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.message),
+                backgroundColor: Colors.red.shade400,
+              ),
+            );
+          }
+        },
+        child: Scaffold(
+          body: Container(
+            width: double.infinity,
+            height: double.infinity,
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [AppColors.primary, AppColors.primaryDark],
+              ),
             ),
-          ),
-          child: SafeArea(
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    IconButton(
-                      onPressed: () async {
-                        await sl<TokenStorage>().clearToken();
-                        if (!context.mounted) return;
-                        context.pushUntil(
-                          Routes.loginScreen,
-                          (route) => false,
-                        );
-                      },
-                      icon: const Icon(
-                        Icons.logout,
-                        color: Colors.white,
-                      ),
-                    ),
-                    SizedBox(width: 16.w),
-                  ],
-                ),
-                SizedBox(height: 16.h),
-                // خط صغير أعلى الشاشة (handle) زي التصميم
-                Container(
-                  width: 40.w,
-                  height: 4.h,
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.6),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                const Spacer(),
-
-                // ---- الكارت الأبيض الرئيسي ----
-                Container(
-                  margin: EdgeInsets.symmetric(horizontal: 24.w),
-                  padding: EdgeInsets.symmetric(vertical: 32.h, horizontal: 20.w),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(24.r),
-                  ),
-                  child: Column(
+            child: SafeArea(
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Container(
-                        width: 90.w,
-                        height: 90.w,
-                        decoration: const BoxDecoration(
-                          color: Color(0xFFFBEAE3),
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          Icons.qr_code_scanner_rounded,
-                          size: 44.sp,
-                          color: AppColors.primary,
-                        ),
+                      IconButton(
+                        onPressed: () async {
+                          await sl<TokenStorage>().clearToken();
+                          if (!context.mounted) return;
+                          context.pushUntil(
+                            Routes.loginScreen,
+                            (route) => false,
+                          );
+                        },
+                        icon: const Icon(Icons.logout, color: Colors.white),
                       ),
-                      SizedBox(height: 20.h),
-                      Text(
-                        'اضغط على زر المسح لتشغيل الكاميرا والتقاط الرمز\nالخاص بك فوراً',
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.cairo(
-                          fontSize: 14,
-                          color: Colors.black54,
-                        ),
-                      ),
-                      SizedBox(height: 24.h),
-                      SizedBox(
-                        width: double.infinity,
-                        height: 52.h,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => BlocProvider.value(
-                                  value: context.read<ScanQrCubit>(),
-                                  child: const ScanQrCameraView(),
-                                ),
-                              ),
-                            );
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF3E8E4F),
-                            elevation: 0,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(14.r),
-                            ),
-                          ),
-                          child: Text(
-                            'مسح (Scan)',
-                            style: GoogleFonts.cairo(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                      ),
+                      SizedBox(width: 16.w),
                     ],
                   ),
-                ),
-                const Spacer(),
-              ],
+                  SizedBox(height: 16.h),
+                  // خط صغير أعلى الشاشة (handle) زي التصميم
+                  Container(
+                    width: 40.w,
+                    height: 4.h,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.6),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  const Spacer(),
+
+                  // ---- الكارت الأبيض الرئيسي ----
+                  Container(
+                    margin: EdgeInsets.symmetric(horizontal: 24.w),
+                    padding: EdgeInsets.symmetric(
+                      vertical: 32.h,
+                      horizontal: 20.w,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(24.r),
+                    ),
+                    child: Column(
+                      children: [
+                        Container(
+                          width: 90.w,
+                          height: 90.w,
+                          decoration: const BoxDecoration(
+                            color: Color(0xFFFBEAE3),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Icons.qr_code_scanner_rounded,
+                            size: 44.sp,
+                            color: AppColors.primary,
+                          ),
+                        ),
+                        SizedBox(height: 20.h),
+                        Text(
+                          'اضغط على زر المسح لتشغيل الكاميرا والتقاط الرمز\nالخاص بك فوراً',
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.cairo(
+                            fontSize: 14,
+                            color: Colors.black54,
+                          ),
+                        ),
+                        SizedBox(height: 24.h),
+                        SizedBox(
+                          width: double.infinity,
+                          height: 52.h,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => BlocProvider.value(
+                                    value: context.read<ScanQrCubit>(),
+                                    child: const ScanQrCameraView(),
+                                  ),
+                                ),
+                              );
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF3E8E4F),
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(14.r),
+                              ),
+                            ),
+                            child: Text(
+                              'مسح (Scan)',
+                              style: GoogleFonts.cairo(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 12.h),
+                        // DEMO MODE: resolve a fictional student locally, without
+                        // the camera and without any network request.
+                        SizedBox(
+                          width: double.infinity,
+                          height: 48.h,
+                          child: OutlinedButton.icon(
+                            onPressed: () {
+                              context.read<ScanQrCubit>().scanAndFetch(
+                                DemoData.studentQrCode,
+                              );
+                            },
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: AppColors.primary,
+                              side: BorderSide(color: AppColors.primary),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(14.r),
+                              ),
+                            ),
+                            icon: const Icon(
+                              Icons.smart_toy_outlined,
+                              size: 20,
+                            ),
+                            label: Text(
+                              'محاكاة مسح تجريبي',
+                              style: GoogleFonts.cairo(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Spacer(),
+                ],
+              ),
             ),
           ),
         ),
